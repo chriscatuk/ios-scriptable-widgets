@@ -274,7 +274,7 @@ async function createWidget () {
     // car location
     const road = geoData.address.road || ''
     const houseNumber = geoData.address.house_number || ''
-    let street = road + ' ' + houseNumber
+    let street = houseNumber + ' ' + road
     let geoPositionStreetTxt = widget.addText(street)
     geoPositionStreetTxt.font = Font.semiboldSystemFont(11)
     geoPositionStreetTxt.textColor = textColor
