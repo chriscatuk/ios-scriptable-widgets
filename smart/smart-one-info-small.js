@@ -504,7 +504,7 @@ ${url}`
 async function initialLogin () {
   console.log('Starting complete login process from scratch.')
   const url =
-    'https://awsapi.future.smart.com/login-app/api/v1/authorize?uiLocales=en&uiLocales=en'
+    'https://awsapi.future.smart.com/login-app/api/v1/authorize?uiLocales=en'
   let req = new Request(url)
   req.headers = {
     'x-app-id': 'SmartAPPEU',
