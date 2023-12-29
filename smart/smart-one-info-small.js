@@ -552,7 +552,7 @@ async function initialLogin () {
   req.headers = {
     accept: '*/*',
     cookie: cookieValue,
-    'accept-language': 'en-GB,de;q=0.9,en-DE;q=0.8,en-US;q=0.7,en;q=0.6',
+    'accept-language': 'en-GB,en;q=0.9,fr-FR;q=0.8,en-US;q=0.7,fr-FR;q=0.6,fr;q=0.5',
     'x-requested-with': 'com.smart.hellosmart',
     'user-agent': 'Hello smart/1.4.0 (iPhone; iOS 17.1; Scale/3.00)'
   }
