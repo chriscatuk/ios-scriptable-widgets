@@ -33,6 +33,7 @@ if (param != null && param.length > 0) {
   userName = '***'
   password = '***'
   apiKey = ''
+  distance_unit = 'km'
 }
 
 const deviceId = randomHexString(16)
@@ -67,8 +68,11 @@ const languageMap = {
   }
 }
 
-function convertKmToMiles(km) {
-  return km * 0.621371;
+function convertKmToLocal(km, unit) {
+  if( unit == 'mi' )
+    return km * 0.621371;
+  else
+    return km;
 }
 
 // detects the user's language needed for translation
@@ -255,7 +259,7 @@ async function createWidget () {
     let remainingKilometer = carData.data.vehicleStatus.additionalVehicleStatus.electricVehicleStatus.distanceToEmptyOnBatteryOnly
 
     let remainingKilometerNo = mainBatteryStack.addText(
-      Math.round(convertKmToMiles(remainingKilometer)) + ' mi'
+      Math.round(convertKmToLocal(remainingKilometer, distance_unit)) + ' ' + distance_unit
     )
     remainingKilometerNo.font = Font.semiboldSystemFont(11)
     remainingKilometerNo.textColor = textColor
