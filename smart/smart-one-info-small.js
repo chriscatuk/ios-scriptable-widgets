@@ -67,6 +67,10 @@ const languageMap = {
   }
 }
 
+function convertKmToMiles(km) {
+  return km * 0.621371;
+}
+
 // detects the user's language needed for translation
 function detectLanguage () {
   let selected_language = 'en'
@@ -248,12 +252,10 @@ async function createWidget () {
 
     mainBatteryStack.addSpacer(1)
 
-    let remainingKilometer =
-      carData.data.vehicleStatus.additionalVehicleStatus.electricVehicleStatus
-        .distanceToEmptyOnBatteryOnly
+    let remainingKilometer = carData.data.vehicleStatus.additionalVehicleStatus.electricVehicleStatus.distanceToEmptyOnBatteryOnly
 
     let remainingKilometerNo = mainBatteryStack.addText(
-      Math.round(remainingKilometer) + ' KM'
+      Math.round(convertKmToMiles(remainingKilometer)) + ' mi'
     )
     remainingKilometerNo.font = Font.semiboldSystemFont(11)
     remainingKilometerNo.textColor = textColor
