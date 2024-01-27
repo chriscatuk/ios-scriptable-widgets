@@ -34,7 +34,7 @@ if (param != null && param.length > 0) {
   userName = '***'
   password = '***'
   apiKey = ''
-  distance_unit = 'km'
+  distance_unit = 'km' // 'km' or 'mi'
 }
 
 const deviceId = randomHexString(16)
