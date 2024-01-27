@@ -13,6 +13,7 @@ try {
 
 let userName
 let password
+let distance_unit
 let vin
 let model
 const param = args.widgetParameter
