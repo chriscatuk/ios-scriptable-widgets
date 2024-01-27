@@ -19,10 +19,10 @@ const param = args.widgetParameter
 if (param != null && param.length > 0) {
   const paramArray = param.split(';')
   if (paramArray.length >= 4) {
-    userName = paramArray[0]
-    password = paramArray[1]
-    vin = paramArray[2]
-    apiKey = paramArray[3]
+    userName = paramArray[0].trim()
+    password = paramArray[1].trim()
+    vin = paramArray[2].trim()
+    apiKey = paramArray[3].trim()
   } else {
     console.log('Error reading user credentials.')
   }
@@ -132,6 +132,7 @@ if (updateSession.code == 1402) {
 
 const allCars = await getAllCars(credentials.apiAccessToken)
 const car = allCars.data.list.find(o => o.vin === vin)
+
 model = car.matCode
 let carData = await getCarInfo(credentials.apiAccessToken)
 
@@ -272,8 +273,8 @@ async function createWidget () {
     widget.addSpacer(1)
 
     // car location
-    const road = geoData.address.road || ''
-    const houseNumber = geoData.address.house_number || ''
+    const road = geoData.items[0].address.street || ''
+    const houseNumber = geoData.items[0].address.houseNumber || ''
     let street = road
     if (houseNumber){
       street = houseNumber + ' ' + street
@@ -283,8 +284,8 @@ async function createWidget () {
     geoPositionStreetTxt.textColor = textColor
     geoPositionStreetTxt.lineLimit = 1
     geoPositionStreetTxt.minimumScaleFactor = 0.8
-    const zip = geoData.address.postcode || ''
-    const city = geoData.address.city || ''
+    const zip = geoData.items[0].address.postalCode || ''
+    const city = geoData.items[0].address.city || ''
     let cityFormatted = zip + ' ' + city
     let geoPositionCityTxt = widget.addText(cityFormatted)
     geoPositionCityTxt.font = Font.lightSystemFont(10)
@@ -635,7 +636,8 @@ async function getGeoData () {
     }
   } else {
     const url =
-      'https://geocode.maps.co/reverse?lat=' + latitude + '&lon=' + longitude + '&api_key=' + apiKey
+      'https://revgeocode.search.hereapi.com/v1/revgeocode?xnlp=CL_JSMv3.1.49.1&apikey=' 
+      + apiKey + '&at=' + latitude + '%2C' + longitude + '&limit=1'
     const req = new Request(url)
     geoData = await req.loadJSON()
   }
