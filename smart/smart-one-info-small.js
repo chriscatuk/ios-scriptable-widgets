@@ -13,6 +13,7 @@ try {
 
 let userName
 let password
+let distance_unit
 let vin
 let model
 const param = args.widgetParameter
@@ -32,7 +33,8 @@ if (param != null && param.length > 0) {
   vin = '***'
   userName = '***'
   password = '***'
-  apiKey = '***'
+  apiKey = ''
+  distance_unit = 'km' // 'km' or 'mi'
 }
 
 const deviceId = randomHexString(16)
@@ -65,6 +67,13 @@ const languageMap = {
     location: 'Position',
     unavailable: 'indisponible'
   }
+}
+
+function convertKmToLocal(km, unit) {
+  if( unit == 'mi' )
+    return km * 0.621371;
+  else
+    return km;
 }
 
 // detects the user's language needed for translation
@@ -248,12 +257,10 @@ async function createWidget () {
 
     mainBatteryStack.addSpacer(1)
 
-    let remainingKilometer =
-      carData.data.vehicleStatus.additionalVehicleStatus.electricVehicleStatus
-        .distanceToEmptyOnBatteryOnly
+    let remainingKilometer = carData.data.vehicleStatus.additionalVehicleStatus.electricVehicleStatus.distanceToEmptyOnBatteryOnly
 
     let remainingKilometerNo = mainBatteryStack.addText(
-      Math.round(remainingKilometer) + ' KM'
+      Math.round(convertKmToLocal(remainingKilometer, distance_unit)) + ' ' + distance_unit
     )
     remainingKilometerNo.font = Font.semiboldSystemFont(11)
     remainingKilometerNo.textColor = textColor
@@ -274,15 +281,18 @@ async function createWidget () {
 
     // car location
     const road = geoData.items[0].address.street || ''
-    const houseNumber = geoData.items[0].address.houseNumber || 'Unbekannt'
-    let street = road + ' ' + houseNumber
+    const houseNumber = geoData.items[0].address.houseNumber || ''
+    let street = road
+    if (houseNumber){
+      street = houseNumber + ' ' + street
+    }
     let geoPositionStreetTxt = widget.addText(street)
     geoPositionStreetTxt.font = Font.semiboldSystemFont(11)
     geoPositionStreetTxt.textColor = textColor
     geoPositionStreetTxt.lineLimit = 1
     geoPositionStreetTxt.minimumScaleFactor = 0.8
     const zip = geoData.items[0].address.postalCode || ''
-    const city = geoData.items[0].address.city || 'Unbekannt'
+    const city = geoData.items[0].address.city || ''
     let cityFormatted = zip + ' ' + city
     let geoPositionCityTxt = widget.addText(cityFormatted)
     geoPositionCityTxt.font = Font.lightSystemFont(10)
@@ -502,7 +512,7 @@ ${url}`
 async function initialLogin () {
   console.log('Starting complete login process from scratch.')
   const url =
-    'https://awsapi.future.smart.com/login-app/api/v1/authorize?uiLocales=de-DE&uiLocales=de-DE'
+    'https://awsapi.future.smart.com/login-app/api/v1/authorize?uiLocales=en-GB'
   let req = new Request(url)
   req.headers = {
     'x-app-id': 'SmartAPPEU',
@@ -521,7 +531,7 @@ async function initialLogin () {
   req.method = 'POST'
   req.headers = {
     accept: '*/*',
-    'accept-language': 'de',
+    'accept-language': 'en',
     'content-type': 'application/x-www-form-urlencoded',
     'x-requested-with': 'com.smart.hellosmart',
     cookie:
@@ -534,7 +544,7 @@ async function initialLogin () {
     encodeURIComponent(userName) +
     '&password=' +
     encodeURIComponent(password) +
-    '&sessionExpiration=2592000&targetEnv=jssdk&include=profile%2Cdata%2Cemails%2Csubscriptions%2Cpreferences%2C&includeUserInfo=true&loginMode=standard&lang=de&APIKey=3_L94eyQ-wvJhWm7Afp1oBhfTGXZArUfSHHW9p9Pncg513hZELXsxCfMWHrF8f5P5a&source=showScreenSet&sdk=js_latest&authMode=cookie&pageURL=https%3A%2F%2Fapp.id.smart.com%2Flogin%3Fgig_ui_locales%3Dde-DE&sdkBuild=15482&format=json&riskContext=%7B%22b0%22%3A41187%2C%22b1%22%3A%5B0%2C2%2C3%2C1%5D%2C%22b2%22%3A4%2C%22b3%22%3A%5B%22-23%7C0.383%22%2C%22-81.33333587646484%7C0.236%22%5D%2C%22b4%22%3A3%2C%22b5%22%3A1%2C%22b6%22%3A%22Hello%20smart%2F1.4.0%20%28iPhone%3B%20iOS%2017.1%3B%20Scale%2F3.00%29%22%2C%22b7%22%3A%5B%5D%2C%22b8%22%3A%2216%3A33%3A26%22%2C%22b9%22%3A-60%2C%22b10%22%3Anull%2C%22b11%22%3Afalse%2C%22b12%22%3A%7B%22charging%22%3Afalse%2C%22chargingTime%22%3Anull%2C%22dischargingTime%22%3Anull%2C%22level%22%3A0.58%7D%2C%22b13%22%3A%5B5%2C%22360%7C760%7C24%22%2Cfalse%2Ctrue%5D%7D'
+  '&sessionExpiration=2592000&targetEnv=jssdk&include=profile%2Cdata%2Cemails%2Csubscriptions%2Cpreferences%2C&includeUserInfo=true&loginMode=standard&lang=en&APIKey=3_L94eyQ-wvJhWm7Afp1oBhfTGXZArUfSHHW9p9Pncg513hZELXsxCfMWHrF8f5P5a&source=showScreenSet&sdk=js_latest&authMode=cookie&pageURL=https%3A%2F%2Fapp.id.smart.com%2Flogin%3Fgig_ui_locales%3Den-GB&sdkBuild=15482&format=json&riskContext=%7B%22b0%22%3A41187%2C%22b1%22%3A%5B0%2C2%2C3%2C1%5D%2C%22b2%22%3A4%2C%22b3%22%3A%5B%22-23%7C0.383%22%2C%22-81.33333587646484%7C0.236%22%5D%2C%22b4%22%3A3%2C%22b5%22%3A1%2C%22b6%22%3A%22Hello%20smart%2F1.4.0%20%28iPhone%3B%20iOS%2017.1%3B%20Scale%2F3.00%29%22%2C%22b7%22%3A%5B%5D%2C%22b8%22%3A%2216%3A33%3A26%22%2C%22b9%22%3A-60%2C%22b10%22%3Anull%2C%22b11%22%3Afalse%2C%22b12%22%3A%7B%22charging%22%3Afalse%2C%22chargingTime%22%3Anull%2C%22dischargingTime%22%3Anull%2C%22level%22%3A0.58%7D%2C%22b13%22%3A%5B5%2C%22360%7C760%7C24%22%2Cfalse%2Ctrue%5D%7D'
   let loginResult = await req.loadJSON()
   const loginToken = loginResult.sessionInfo.login_token
 
@@ -550,7 +560,7 @@ async function initialLogin () {
   req.headers = {
     accept: '*/*',
     cookie: cookieValue,
-    'accept-language': 'de-DE,de;q=0.9,en-DE;q=0.8,en-US;q=0.7,en;q=0.6',
+    'accept-language': 'en-GB,en;q=0.9,en-US;q=0.8,fr-FR;q=0.7,fr;q=0.6',
     'x-requested-with': 'com.smart.hellosmart',
     'user-agent': 'Hello smart/1.4.0 (iPhone; iOS 17.1; Scale/3.00)'
   }
@@ -620,7 +630,7 @@ async function getGeoData () {
     carData.data.vehicleStatus.basicVehicleStatus.position.longitude
   longitude = longitude / 3600000
   let geoData
-  if (longitude == 0 && latitude == 0) {
+  if ( apiKey == '' || (longitude == 0 && latitude == 0)) {
     console.log('Geo data unavailable!')
     geoData = {
       address: {
